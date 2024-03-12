@@ -13,6 +13,10 @@ type Config struct {
 	MQPassword          string
 	MQHost              string
 	MQPort              int
+	MQContentType       string
+	DateTimeFormat      string
+	MQAddressFormat     string
+	DefaultStatus       string
 }
 
 const (
@@ -35,5 +39,9 @@ func init() {
 	Configuration.MQPassword = "guest"
 	Configuration.MQHost = "localhost"
 	Configuration.MQPort = 5672
+	Configuration.MQContentType = "application/json"
+	Configuration.DateTimeFormat = "2006-01-02T15:04:05"
+	Configuration.MQAddressFormat = "amqp://%v:%v@%v:%v/"
+	Configuration.DefaultStatus = "OK"
 
 }

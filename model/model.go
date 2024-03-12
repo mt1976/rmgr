@@ -1,171 +1,138 @@
 package model
 
-type Welcome4 struct {
-	Msg Msg `json:"msg"`
+import (
+	"fmt"
+	"strconv"
+)
+
+type Rate struct {
+	Bid        float64 `json:"bid,omitempty"`
+	Ask        float64 `json:"ask,omitempty"`
+	Owner      string  `json:"own,omitempty"`
+	RiskCentre string  `json:"rsk,omitempty"`
+	DateTime   string  `json:"dTme,omitempty"`
+	Amount     string  `json:"amt,omitempty"`
+	AmtCcy     string  `json:"amtCcy,omitempty"`
+	Status     string  `json:"sts,omitempty"`
+	Category   string  `json:"cat,omitempty"`
+	ID         string  `json:"id,omitempty"`
+	Source     string  `json:"src,omitempty"`
 }
 
-type Msg struct {
-	Coll                         Coll   `json:"coll"`
-	XmlnsXsi                     string `json:"_xmlns:xsi"`
-	XsiNoNamespaceSchemaLocation string `json:"_xsi:noNamespaceSchemaLocation"`
-}
-
-type Coll struct {
-	Rt []Rt `json:"rt"`
-}
-
-type Rt struct {
-	Bid    string `json:"bid"`
-	Ask    string `json:"ask"`
-	Own    string `json:"own"`
-	Rsk    string `json:"rsk"`
-	DTme   string `json:"dTme"`
-	Amt    string `json:"amt"`
-	AmtCcy string `json:"amtCcy"`
-	Sts    string `json:"sts"`
-	Cat    string `json:"_cat"`
-	ID     string `json:"_id"`
-	Src    string `json:"_src"`
-}
-
-func (welcome4 *Welcome4) GetMsg() Msg {
-	return welcome4.Msg
-}
-
-func (welcome4 *Welcome4) SetMsg(Msg Msg) *Welcome4 {
-	welcome4.Msg = Msg
-	return welcome4
-}
-func (msg *Msg) GetColl() Coll {
-	return msg.Coll
-}
-
-func (msg *Msg) GetXmlnsXsi() string {
-	return msg.XmlnsXsi
-}
-
-func (msg *Msg) GetXsiNoNamespaceSchemaLocation() string {
-	return msg.XsiNoNamespaceSchemaLocation
-}
-
-func (msg *Msg) SetColl(Coll Coll) *Msg {
-	msg.Coll = Coll
-	return msg
-}
-
-func (msg *Msg) SetXmlnsXsi(XmlnsXsi string) *Msg {
-	msg.XmlnsXsi = XmlnsXsi
-	return msg
-}
-
-func (msg *Msg) SetXsiNoNamespaceSchemaLocation(XsiNoNamespaceSchemaLocation string) *Msg {
-	msg.XsiNoNamespaceSchemaLocation = XsiNoNamespaceSchemaLocation
-	return msg
-}
-
-// func (coll *Coll) GetRt() Rt {
-// 	return coll.Rt
-// }
-
-//	func (coll *Coll) SetRt(Rt Rt) *Coll {
-//		coll.Rt = Rt
-//		return coll
-//	}
-func (rt *Rt) GetBid() string {
+func (rt *Rate) GetBid() float64 {
 	return rt.Bid
 }
 
-func (rt *Rt) GetAsk() string {
+func (rt *Rate) GetAsk() float64 {
 	return rt.Ask
 }
 
-func (rt *Rt) GetOwn() string {
-	return rt.Own
+func (rt *Rate) GetOwn() string {
+	return rt.Owner
 }
 
-func (rt *Rt) GetRsk() string {
-	return rt.Rsk
+func (rt *Rate) GetRsk() string {
+	return rt.RiskCentre
 }
 
-func (rt *Rt) GetDTme() string {
-	return rt.DTme
+func (rt *Rate) GetDTme() string {
+	return rt.DateTime
 }
 
-func (rt *Rt) GetAmt() string {
-	return rt.Amt
+func (rt *Rate) GetAmt() string {
+	return rt.Amount
 }
 
-func (rt *Rt) GetAmtCcy() string {
+func (rt *Rate) GetAmtCcy() string {
 	return rt.AmtCcy
 }
 
-func (rt *Rt) GetSts() string {
-	return rt.Sts
+func (rt *Rate) GetSts() string {
+	return rt.Status
 }
 
-func (rt *Rt) GetCat() string {
-	return rt.Cat
+func (rt *Rate) GetCat() string {
+	return rt.Category
 }
 
-func (rt *Rt) GetID() string {
+func (rt *Rate) GetID() string {
 	return rt.ID
 }
 
-func (rt *Rt) GetSrc() string {
-	return rt.Src
+func (rt *Rate) GetSrc() string {
+	return rt.Source
 }
 
-func (rt *Rt) SetBid(Bid string) *Rt {
+func (rt *Rate) SetBid(Bid string) *Rate {
+	//strconv.ParseFloat(Bid, 64)
+	arse, Err := strconv.ParseFloat(Bid, 64)
+	if Err != nil {
+		fmt.Println(Err)
+	}
+	rt.Bid = arse
+	return rt
+}
+
+func (rt *Rate) SetBidFloat(Bid float64) *Rate {
 	rt.Bid = Bid
 	return rt
 }
 
-func (rt *Rt) SetAsk(Ask string) *Rt {
+func (rt *Rate) SetAsk(Ask string) *Rate {
+	arse, Err := strconv.ParseFloat(Ask, 64)
+	if Err != nil {
+		fmt.Println(Err)
+	}
+	rt.Ask = arse
+	return rt
+}
+
+func (rt *Rate) SetAskFloat(Ask float64) *Rate {
 	rt.Ask = Ask
 	return rt
 }
 
-func (rt *Rt) SetOwn(Own string) *Rt {
-	rt.Own = Own
+func (rt *Rate) SetOwn(Own string) *Rate {
+	rt.Owner = Own
 	return rt
 }
 
-func (rt *Rt) SetRsk(Rsk string) *Rt {
-	rt.Rsk = Rsk
+func (rt *Rate) SetRsk(Rsk string) *Rate {
+	rt.RiskCentre = Rsk
 	return rt
 }
 
-func (rt *Rt) SetDTme(DTme string) *Rt {
-	rt.DTme = DTme
+func (rt *Rate) SetDTme(DTme string) *Rate {
+	rt.DateTime = DTme
 	return rt
 }
 
-func (rt *Rt) SetAmt(Amt string) *Rt {
-	rt.Amt = Amt
+func (rt *Rate) SetAmt(Amt string) *Rate {
+	rt.Amount = Amt
 	return rt
 }
 
-func (rt *Rt) SetAmtCcy(AmtCcy string) *Rt {
+func (rt *Rate) SetAmtCcy(AmtCcy string) *Rate {
 	rt.AmtCcy = AmtCcy
 	return rt
 }
 
-func (rt *Rt) SetSts(Sts string) *Rt {
-	rt.Sts = Sts
+func (rt *Rate) SetSts(Sts string) *Rate {
+	rt.Status = Sts
 	return rt
 }
 
-func (rt *Rt) SetCat(Cat string) *Rt {
-	rt.Cat = Cat
+func (rt *Rate) SetCat(Cat string) *Rate {
+	rt.Category = Cat
 	return rt
 }
 
-func (rt *Rt) SetID(ID string) *Rt {
+func (rt *Rate) SetID(ID string) *Rate {
 	rt.ID = ID
 	return rt
 }
 
-func (rt *Rt) SetSrc(Src string) *Rt {
-	rt.Src = Src
+func (rt *Rate) SetSrc(Src string) *Rate {
+	rt.Source = Src
 	return rt
 }

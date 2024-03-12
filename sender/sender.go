@@ -2,6 +2,7 @@ package sender
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -22,13 +23,13 @@ func Run() error {
 	password := config.MQPassword
 	host := config.MQHost
 	port := config.MQPort
-	target := "amqp://%v:%v@%v:%v/"
-	targetAddress := fmt.Sprintf(target, user, password, host, port)
+	//target := "amqp://%v:%v@%v:%v/"
+	targetAddress := fmt.Sprintf(config.MQAddressFormat, user, password, host, port)
 
 	//fmt.Println("Go RabbitMQ Tutorial")
 	conn, err := amqp.Dial(targetAddress)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(E.ErrError, err)
 		panic(err.Error())
 	}
 	defer conn.Close()
@@ -39,7 +40,7 @@ func Run() error {
 	// over the connection we have already established
 	ch, err := conn.Channel()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(E.ErrError, err)
 	}
 	defer ch.Close()
 	fmt.Println(L.TxtMQChannelOpen)
@@ -66,7 +67,7 @@ func Run() error {
 	fmt.Println(L.TxtMQMessages, q.Messages)
 	// Handle any errors if we were unable to create the queue
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(E.ErrError, err)
 	}
 
 	Types = make(map[int]string)
@@ -110,7 +111,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	if asset != "FX" {
 		return
 	}
-	rateType := rec[M.ASSET_CLASS]           // Rate Type]
+	rateType := rec[M.ASSET_CLASS]           // Rate Type
 	source, _ := strconv.Atoi(rec[M.SOURCE]) // Source
 	sourceName := Types[source]
 	rateID := rec[M.BASE_CCY] + rec[M.QUOTE_CCY]
@@ -127,7 +128,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	// fmt.Printf("rateType: %v\n", rateType)
 	// fmt.Printf("rateID: %v\n", rateID)
 
-	var x M.Rt
+	var x M.Rate
 	x.SetCat(sourceName)
 	x.SetSrc(sourceName)
 	x.SetID(rateID)
@@ -135,8 +136,15 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	x.SetAsk(rec[M.OFFER])
 	x.SetOwn(rec[M.OWNER])
 	x.SetRsk(rec[M.RISK_CENTRE])
-	x.SetSts("OK")
+	x.SetSts(config.DefaultStatus)
 	x.SetDTme(NowToDateTime(time.Now()))
+
+	// Marshal the struct into a JSON string
+	json, err := json.Marshal(x)
+	if err != nil {
+		fmt.Println(E.ErrError, err)
+	}
+	//	fmt.Println(string(json))
 	//spew.Dump(x)
 	// var col M.Coll
 	// col.Rt = append(col.Rt, x)
@@ -145,29 +153,29 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	// msg.SetXmlnsXsi("http://www.w3.org/2001/XMLSchema-instance")
 	// msg.Coll = col
 	//spew.Dump(x)
-	xx := fmt.Sprintf("x: %v\n", x)
+	//xx := fmt.Sprintf("json: %v\n", json)
 
 	// attempt to publish a message to the queue!
-	err := ch.Publish(
+	publishErr := ch.Publish(
 		"",
 		config.MQQueue,
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(xx),
+			ContentType: config.MQContentType,
+			Body:        json,
 		},
 	)
 
-	if err != nil {
-		fmt.Println(err)
+	if publishErr != nil {
+		fmt.Println(E.ErrError, err)
 	}
 	fmt.Printf(L.TxtMQMessagePublised, NowToDateTime(time.Now()))
 
 	//os.Exit(1)
 }
 
+// NowToDateTime returns a formatted date and time string
 func NowToDateTime(now time.Time) string {
-	//2012-11-28T10:10:10
-	return now.Format("2006-01-02T15:04:05")
+	return now.Format(config.DateTimeFormat)
 }
