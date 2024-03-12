@@ -1,0 +1,10 @@
+Management UI: http://localhost:15672
+Homebrew-specific docs: https://rabbitmq.com/install-homebrew.html
+
+Bash completion has been installed to:
+  /opt/homebrew/etc/bash_completion.d
+
+To start rabbitmq now and restart at login:
+  brew services start rabbitmq
+Or, if you don't want/need a background service you can just run:
+  CONF_ENV_FILE="/opt/homebrew/etc/rabbitmq/rabbitmq-env.conf" /opt/homebrew/opt/rabbitmq/sbin/rabbitmq-server

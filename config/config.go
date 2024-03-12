@@ -8,6 +8,7 @@ type Config struct {
 	ApplicationName     string
 	SimulatorSourceFile string
 	SimulatorConfigFile string
+	QueueName           string
 }
 
 const (
@@ -25,5 +26,6 @@ func init() {
 	Configuration.Protocol = "tcp"
 	Configuration.SimulatorSourceFile = "data.csv"
 	Configuration.SimulatorConfigFile = "config.csv"
+	Configuration.QueueName = "TestQueue"
 
 }
