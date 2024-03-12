@@ -2,54 +2,43 @@ package main
 
 import (
 	"fmt"
-	"net"
+
+	C "github.com/mt1976/rmg/config"
+	E "github.com/mt1976/rmg/errors"
+	L "github.com/mt1976/rmg/language"
+	S "github.com/mt1976/rmg/sender"
 )
+
+var config = C.Configuration
 
 func main() {
 
-	port := 5382
-	machine := "127.0.0.1"
-	fmt.Println("Prototype Rate Manager Connector")
-	fmt.Println("Machine  :", machine)
-	fmt.Println("Port     :", port)
-	fmt.Println("Method   :", "TCP")
+	// Get the configuration
 
-	targetAddress := fmt.Sprintf("%s:%d", machine, port)
+	port := config.Port
+	target := config.Target
+	fmt.Println(config.ApplicationName)
+	fmt.Println(L.TxtTarget, target)
+	fmt.Println(L.TxtPort, port)
 
-	listener, err := net.Listen("tcp", targetAddress)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
+	targetAddress := fmt.Sprintf("%s:%d", target, port)
+	fmt.Println(L.TxtAddress, targetAddress)
+
+	switch config.Role {
+	case C.SEND:
+		fmt.Println(L.TxtMode, L.TxtModeSending)
+		send(targetAddress)
+	case C.RECEIVE:
+		fmt.Println(L.TxtMode, L.TxtModeReceiving)
+		//receive(targetAddress)
+	default:
+		fmt.Println(E.ErrInvalidRole)
 	}
-	defer listener.Close()
 
-	fmt.Println("Server is listening for messages from", targetAddress)
-
-	for {
-		// Accept incoming connections
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Println("Error:", err)
-			continue
-		}
-
-		// Handle client connection in a goroutine
-		go handleClient(conn)
-	}
 }
 
-func handleClient(conn net.Conn) {
-	defer conn.Close()
-	buffer := make([]byte, 1024)
-	for {
-		// Read data from the client
-		n, err := conn.Read(buffer)
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-
-		// Process and use the data (here, we'll just print it)
-		fmt.Printf("Received: %s\n", buffer[:n])
-	}
+func send(address string) {
+	fmt.Println(address)
+	fmt.Println(C.Configuration)
+	S.Run()
 }

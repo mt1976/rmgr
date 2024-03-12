@@ -1,0 +1,2 @@
+,DELAY BETWEEN RATES (ms),Batch Size,Number of Batches (per run),Number of runs,Delay Increment,Batch Size Increment,,,,,,
+0,50,1,1000,-1,0,0,,,,,,
