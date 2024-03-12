@@ -8,7 +8,11 @@ type Config struct {
 	ApplicationName     string
 	SimulatorSourceFile string
 	SimulatorConfigFile string
-	QueueName           string
+	MQQueue             string
+	MQUser              string
+	MQPassword          string
+	MQHost              string
+	MQPort              int
 }
 
 const (
@@ -26,6 +30,10 @@ func init() {
 	Configuration.Protocol = "tcp"
 	Configuration.SimulatorSourceFile = "data.csv"
 	Configuration.SimulatorConfigFile = "config.csv"
-	Configuration.QueueName = "TestQueue"
+	Configuration.MQQueue = "TestQueue"
+	Configuration.MQUser = "guest"
+	Configuration.MQPassword = "guest"
+	Configuration.MQHost = "localhost"
+	Configuration.MQPort = 5672
 
 }

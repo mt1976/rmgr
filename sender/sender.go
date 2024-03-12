@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	C "github.com/mt1976/rmg/config"
 	E "github.com/mt1976/rmg/errors"
+	L "github.com/mt1976/rmg/language"
 	M "github.com/mt1976/rmg/model"
 	"github.com/streadway/amqp"
 )
@@ -18,14 +18,14 @@ var config = C.Configuration
 var Types map[int]string
 
 func Run() error {
-	user := "guest"
-	password := "guest"
-	host := "localhost"
-	port := 5672
+	user := config.MQUser
+	password := config.MQPassword
+	host := config.MQHost
+	port := config.MQPort
 	target := "amqp://%v:%v@%v:%v/"
 	targetAddress := fmt.Sprintf(target, user, password, host, port)
 
-	fmt.Println("Go RabbitMQ Tutorial")
+	//fmt.Println("Go RabbitMQ Tutorial")
 	conn, err := amqp.Dial(targetAddress)
 	if err != nil {
 		fmt.Println(err)
@@ -33,7 +33,7 @@ func Run() error {
 	}
 	defer conn.Close()
 
-	fmt.Println("Successfully Connected to our RabbitMQ Instance")
+	fmt.Println(L.TxtConnectedToMQ)
 
 	// Let's start by opening a channel to our RabbitMQ instance
 	// over the connection we have already established
@@ -42,13 +42,14 @@ func Run() error {
 		fmt.Println(err)
 	}
 	defer ch.Close()
-	fmt.Printf("\"Channel Open\": %v\n", "Channel Open")
+	fmt.Println(L.TxtMQChannelOpen)
+	fmt.Printf(L.TxtMQConnectToQueue, config.MQQueue)
 
 	// with this channel open, we can then start to interact
 	// with the instance and declare Queues that we can publish and
 	// subscribe to
 	q, err := ch.QueueDeclare(
-		config.QueueName,
+		config.MQQueue,
 		false,
 		false,
 		false,
@@ -59,7 +60,10 @@ func Run() error {
 	// We can print out the status of our Queue here
 	// this will information like the amount of messages on
 	// the queue
-	fmt.Println(q)
+	fmt.Println(L.TxtMQQueueConnected)
+	fmt.Println(L.TxtMQName, q.Name)
+	fmt.Println(L.TxtMQConsumers, q.Consumers)
+	fmt.Println(L.TxtMQMessages, q.Messages)
 	// Handle any errors if we were unable to create the queue
 	if err != nil {
 		fmt.Println(err)
@@ -83,7 +87,7 @@ func Run() error {
 	r := csv.NewReader(f)
 	records, _ := r.ReadAll()
 	//	fmt.Printf("records: %v\n", records)
-	fmt.Printf("len(records): %v\n", len(records))
+	//fmt.Printf("len(records): %v\n", len(records))
 	// o := NewScanner(strings.NewReader(records))
 	// for o.Scan() {
 	// 	println(o.Text("Month"), o.Text("Day"))
@@ -91,19 +95,16 @@ func Run() error {
 	for recNo, rec := range records {
 		//fmt.Printf("rec %v: %v %v\n", recNo, rec, len(rec))
 		if recNo != 0 {
-
-			process(ch, recNo, rec)
+			publishRateMessage(ch, rec)
 		}
-		if recNo >= 20 {
-			continue
-		}
+		// if recNo >= 20 {
+		// 	continue
+		// }
 	}
-
 	return nil
-
 }
 
-func process(ch *amqp.Channel, recNo int, rec []string) {
+func publishRateMessage(ch *amqp.Channel, rec []string) {
 
 	asset := rec[M.TYPE] // Asset Class
 	if asset != "FX" {
@@ -143,13 +144,13 @@ func process(ch *amqp.Channel, recNo int, rec []string) {
 	// msg.SetXsiNoNamespaceSchemaLocation("eurobase-rate.xsd")
 	// msg.SetXmlnsXsi("http://www.w3.org/2001/XMLSchema-instance")
 	// msg.Coll = col
-	spew.Dump(x)
+	//spew.Dump(x)
 	xx := fmt.Sprintf("x: %v\n", x)
 
 	// attempt to publish a message to the queue!
 	err := ch.Publish(
 		"",
-		"TestQueue",
+		config.MQQueue,
 		false,
 		false,
 		amqp.Publishing{
@@ -161,7 +162,7 @@ func process(ch *amqp.Channel, recNo int, rec []string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Successfully Published Message to Queue")
+	fmt.Printf(L.TxtMQMessagePublised, NowToDateTime(time.Now()))
 
 	//os.Exit(1)
 }

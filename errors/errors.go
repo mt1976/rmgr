@@ -1,6 +1,7 @@
 package errors
 
 const (
-	ErrInvalidRole    = "invalid role"
-	ErrCannotOpenFile = "cannot open file"
+	ErrInvalidRole               string = "invalid role"
+	ErrCannotOpenFile            string = "cannot open file"
+	ErrCannotBeSenderAndReceiver string = "sender and receiver are mutually exclusive\n"
 )
