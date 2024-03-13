@@ -3,7 +3,12 @@ package model
 import (
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/mt1976/rmg/config"
 )
+
+var C config.Config
 
 type Rate struct {
 	Bid        float64 `json:"bid,omitempty"`
@@ -11,7 +16,7 @@ type Rate struct {
 	Owner      string  `json:"owner,omitempty"`
 	RiskCentre string  `json:"riskcentre,omitempty"`
 	DateTime   string  `json:"dTme,omitempty"`
-	Amount     string  `json:"amt,omitempty"`
+	Amount     float64 `json:"amt,omitempty"`
 	AmtCcy     string  `json:"amtCcy,omitempty"`
 	Status     string  `json:"status,omitempty"`
 	Category   string  `json:"category,omitempty"`
@@ -35,11 +40,20 @@ func (rt *Rate) GetRsk() string {
 	return rt.RiskCentre
 }
 
-func (rt *Rate) GetDTme() string {
+func (rt *Rate) GetDTmeString() string {
 	return rt.DateTime
 }
 
-func (rt *Rate) GetAmt() string {
+func (rt *Rate) GetDTmeTime() time.Time {
+	t, _ := time.Parse(C.DateTimeFormat, rt.DateTime)
+	return t
+}
+
+func (rt *Rate) GetAmtString() string {
+	return strconv.FormatFloat(rt.Amount, 'f', 2, 64)
+}
+
+func (rt *Rate) GetAmt() float64 {
 	return rt.Amount
 }
 
@@ -107,7 +121,17 @@ func (rt *Rate) SetDTme(DTme string) *Rate {
 	return rt
 }
 
-func (rt *Rate) SetAmt(Amt string) *Rate {
+func (rt *Rate) SetDTmeTime(DTme time.Time) *Rate {
+	rt.DateTime = DTme.Format(C.DateTimeFormat)
+	return rt
+}
+
+func (rt *Rate) SetAmtString(Amt string) *Rate {
+	rt.Amount, _ = strconv.ParseFloat(Amt, 64)
+	return rt
+}
+
+func (rt *Rate) SetAmt(Amt float64) *Rate {
 	rt.Amount = Amt
 	return rt
 }
