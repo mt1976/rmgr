@@ -22,6 +22,7 @@ type Rate struct {
 	Category   string  `json:"category,omitempty"`
 	ID         string  `json:"id,omitempty"`
 	Source     string  `json:"src,omitempty"`
+	StaleAfter string  `json:"staleat,omitempty"`
 }
 
 func (rt *Rate) GetBid() float64 {
@@ -45,7 +46,13 @@ func (rt *Rate) GetDTmeString() string {
 }
 
 func (rt *Rate) GetDTmeTime() time.Time {
-	t, _ := time.Parse(C.DateTimeFormat, rt.DateTime)
+	fmt.Printf("C.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	fmt.Printf("rt.DateTime: %v\n", rt.DateTime)
+	t, err := time.Parse(config.Configuration.DateTimeFormat, rt.DateTime)
+	fmt.Printf("t: %v\n", t)
+	if err != nil {
+		fmt.Println("DateConversionError", err.Error())
+	}
 	return t
 }
 
@@ -159,4 +166,27 @@ func (rt *Rate) SetID(ID string) *Rate {
 func (rt *Rate) SetSrc(Src string) *Rate {
 	rt.Source = Src
 	return rt
+}
+
+func (rt *Rate) GetStaleAfter() time.Time {
+	// parse to time
+	xx, err := time.Parse(config.Configuration.DateTimeFormat, rt.StaleAfter)
+	if err != nil {
+		fmt.Println("Error parsing stale after time: ", err)
+	}
+	return xx
+}
+
+func (rt *Rate) GetStaleAfterString() string {
+	return rt.StaleAfter
+}
+
+func (rt *Rate) SetStaleAfter(afterMS int) {
+	fmt.Printf("rt.GetDTmeTime(): %v\n", rt.GetDTmeTime())
+	fmt.Printf("afterMS: %v\n", afterMS)
+	fmt.Printf("time.Millisecond: %v\n", time.Millisecond)
+	fmt.Printf("config.Configuration.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	fmt.Printf("time.Duration(afterMS): %v\n", time.Duration(afterMS))
+	fmt.Printf("(time.Duration(afterMS) * time.Millisecond): %v\n", (time.Duration(afterMS) * time.Millisecond))
+	rt.StaleAfter = rt.GetDTmeTime().Add(time.Duration(afterMS) * time.Millisecond).Format(config.Configuration.DateTimeFormat)
 }

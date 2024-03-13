@@ -18,6 +18,7 @@ type Config struct {
 	DateTimeFormat      string
 	MQAddressFormat     string
 	DefaultStatus       string
+	StaleAfterMS        int
 }
 
 const (
@@ -41,9 +42,9 @@ func init() {
 	Configuration.MQHost = "localhost"
 	Configuration.MQPort = 5672
 	Configuration.MQContentType = "application/json"
-	Configuration.DateTimeFormat = "2006-01-02T15:04:05"
+	Configuration.DateTimeFormat = "2006-01-02T15:04:05.9999999999Z"
 	Configuration.MQAddressFormat = "amqp://%v:%v@%v:%v/"
 	Configuration.DefaultStatus = "OK"
 	Configuration.MQExchange = "amq.rates"
-
+	Configuration.StaleAfterMS = 100 // 100ms
 }

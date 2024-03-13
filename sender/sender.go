@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	C "github.com/mt1976/rmg/config"
@@ -122,8 +123,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	rateID = rateID + rec[M.TENOR]
 	rateID = rateID + "=" // Comment]
 
-	routingKeyFormat := "%v.%v.%v.%v"
-	routingKey := fmt.Sprintf(routingKeyFormat, rec[M.TYPE], rec[M.BASE_CCY], rec[M.QUOTE_CCY], rec[M.TENOR])
+	routingKey := BuildRoutingKey(rec[M.TYPE], rec[M.BASE_CCY], rec[M.QUOTE_CCY], rec[M.TENOR])
 	fmt.Printf("routingKey: %v\n", routingKey)
 	// byte to string conversion
 	//instStr := fmt.Sprintf("%c", asset)
@@ -143,13 +143,14 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	x.SetRsk(rec[M.RISK_CENTRE])
 	x.SetSts(config.DefaultStatus)
 	x.SetDTme(NowToDateTime(time.Now()))
+	x.SetStaleAfter(config.StaleAfterMS)
 
 	// Marshal the struct into a JSON string
 	json, err := json.Marshal(x)
 	if err != nil {
 		fmt.Println(E.ErrError, err)
 	}
-	//	fmt.Println(string(json))
+	fmt.Println(x, string(json))
 	//spew.Dump(x)
 	// var col M.Coll
 	// col.Rt = append(col.Rt, x)
@@ -178,6 +179,13 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	fmt.Printf(L.TxtMQMessagePublised, NowToDateTime(time.Now()))
 
 	//os.Exit(1)
+}
+
+func BuildRoutingKey(assetType, baseCCY, quoteCCY, tenor string) string {
+	routingKeyFormat := "%v.%v.%v.%v"
+	routingKey := fmt.Sprintf(routingKeyFormat, assetType, baseCCY, quoteCCY, tenor)
+	routingKey = strings.ToLower(routingKey)
+	return routingKey
 }
 
 // NowToDateTime returns a formatted date and time string
