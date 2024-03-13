@@ -27,12 +27,8 @@ func main() {
 
 	flag.Parse()
 
-	if sender && receiver {
-		log.Printf(E.ErrCannotBeSenderAndReceiver)
-		return
-	}
-	if !sender && !receiver {
-		log.Printf(E.ErrCannotBeSenderAndReceiver)
+	if (sender && receiver) || (!sender && !receiver) {
+		log.Panicln(E.ErrCannotBeSenderAndReceiver)
 		return
 	}
 

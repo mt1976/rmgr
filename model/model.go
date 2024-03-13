@@ -23,6 +23,7 @@ type Rate struct {
 	ID         string  `json:"id,omitempty"`
 	Source     string  `json:"src,omitempty"`
 	StaleAfter string  `json:"staleat,omitempty"`
+	UUID       string  `json:"uuid,omitempty"`
 }
 
 func (rt *Rate) GetBid() float64 {
@@ -46,10 +47,10 @@ func (rt *Rate) GetDTmeString() string {
 }
 
 func (rt *Rate) GetDTmeTime() time.Time {
-	log.Printf("C.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
-	log.Printf("rt.DateTime: %v\n", rt.DateTime)
+	//log.Printf("C.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	//log.Printf("rt.DateTime: %v\n", rt.DateTime)
 	t, err := time.Parse(config.Configuration.DateTimeFormat, rt.DateTime)
-	log.Printf("t: %v\n", t)
+	//log.Printf("t: %v\n", t)
 	if err != nil {
 		log.Println("DateConversionError", err.Error())
 	}
@@ -182,11 +183,19 @@ func (rt *Rate) GetStaleAfterString() string {
 }
 
 func (rt *Rate) SetStaleAfter(afterMS int) {
-	log.Printf("rt.GetDTmeTime(): %v\n", rt.GetDTmeTime())
-	log.Printf("afterMS: %v\n", afterMS)
-	log.Printf("time.Millisecond: %v\n", time.Millisecond)
-	log.Printf("config.Configuration.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
-	log.Printf("time.Duration(afterMS): %v\n", time.Duration(afterMS))
-	log.Printf("(time.Duration(afterMS) * time.Millisecond): %v\n", (time.Duration(afterMS) * time.Millisecond))
+	// log.Printf("rt.GetDTmeTime(): %v\n", rt.GetDTmeTime())
+	// log.Printf("afterMS: %v\n", afterMS)
+	// log.Printf("time.Millisecond: %v\n", time.Millisecond)
+	// log.Printf("config.Configuration.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	// log.Printf("time.Duration(afterMS): %v\n", time.Duration(afterMS))
+	// log.Printf("(time.Duration(afterMS) * time.Millisecond): %v\n", (time.Duration(afterMS) * time.Millisecond))
 	rt.StaleAfter = rt.GetDTmeTime().Add(time.Duration(afterMS) * time.Millisecond).Format(config.Configuration.DateTimeFormat)
+}
+
+func (rt *Rate) SetUUID(id string) {
+	rt.UUID = id
+}
+
+func (rt *Rate) GetUUID() string {
+	return rt.UUID
 }

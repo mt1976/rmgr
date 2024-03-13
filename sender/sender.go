@@ -14,6 +14,7 @@ import (
 	E "github.com/mt1976/rmg/errors"
 	L "github.com/mt1976/rmg/language"
 	M "github.com/mt1976/rmg/model"
+	S "github.com/mt1976/rmg/support"
 	"github.com/streadway/amqp"
 )
 
@@ -31,8 +32,7 @@ func Run() error {
 	//log.Println("Go RabbitMQ Tutorial")
 	conn, err := amqp.Dial(targetAddress)
 	if err != nil {
-		log.Println(E.ErrError, err)
-		panic(err.Error())
+		log.Panicln(E.ErrError, err)
 	}
 	defer conn.Close()
 
@@ -42,7 +42,7 @@ func Run() error {
 	// over the connection we have already established
 	ch, err := conn.Channel()
 	if err != nil {
-		log.Println(E.ErrError, err)
+		log.Panicln(E.ErrError, err)
 	}
 	defer ch.Close()
 	log.Println(L.TxtMQChannelOpen)
@@ -69,7 +69,7 @@ func Run() error {
 	log.Println(L.TxtMQMessages, q.Messages)
 	// Handle any errors if we were unable to create the queue
 	if err != nil {
-		log.Println(E.ErrError, err)
+		log.Panicln(E.ErrError, err)
 	}
 
 	Types = make(map[int]string)
@@ -114,18 +114,18 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	//	return
 	//}
 	rateType := rec[M.ASSET_CLASS] // Rate Type
-	rateForm := "INTEREST"
-	if rateType[0:2] == "FX" {
-		rateForm = "RATE"
+	rateForm := C.Configuration.InterestType
+	if rateType[0:2] == C.Configuration.FXText {
+		rateForm = C.Configuration.RateText
 	}
 	source, _ := strconv.Atoi(rec[M.SOURCE]) // Source
 	sourceName := Types[source]
 	rateID := rec[M.BASE_CCY] + rec[M.QUOTE_CCY]
 	rateID = rateID + rec[M.TENOR]
-	rateID = rateID + "=" // Comment]
+	rateID = rateID + L.TxtEquals // Comment]
 
 	routingKey := BuildRoutingKey(rec[M.TYPE], rec[M.BASE_CCY], rec[M.QUOTE_CCY], rec[M.TENOR])
-	log.Printf("routingKey: %v\n", routingKey)
+	log.Printf(L.TxtRoutingKey, routingKey)
 	// byte to string conversion
 	//instStr := log.Sprintf("%c", asset)
 	// log.Printf("instStr: %v\n", asset)
@@ -145,6 +145,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	x.SetSts(config.DefaultStatus)
 	x.SetDTme(NowToDateTime(time.Now()))
 	x.SetStaleAfter(config.StaleAfterMS)
+	x.SetUUID(S.NewUUID())
 
 	// Marshal the struct into a JSON string
 	json, err := json.Marshal(x)
@@ -164,13 +165,14 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 
 	// attempt to publish a message to the queue!
 	publishErr := ch.Publish(
-		"",
-		config.MQQueue,
+		config.MQExchange,
+		routingKey,
 		false,
 		false,
 		amqp.Publishing{
 			ContentType: config.MQContentType,
 			Body:        json,
+			MessageId:   x.GetUUID(),
 		},
 	)
 
@@ -183,7 +185,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 }
 
 func BuildRoutingKey(assetType, baseCCY, quoteCCY, tenor string) string {
-	routingKeyFormat := "%v.%v.%v.%v"
+	routingKeyFormat := C.Configuration.RoutingKeyFormat
 	routingKey := fmt.Sprintf(routingKeyFormat, assetType, baseCCY, quoteCCY, tenor)
 	routingKey = strings.ToLower(routingKey)
 	return routingKey

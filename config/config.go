@@ -19,6 +19,10 @@ type Config struct {
 	MQAddressFormat     string
 	DefaultStatus       string
 	StaleAfterMS        int
+	InterestType        string
+	RateText            string
+	FXText              string
+	RoutingKeyFormat    string
 }
 
 const (
@@ -45,6 +49,10 @@ func init() {
 	Configuration.DateTimeFormat = "2006-01-02T15:04:05.9999999999Z"
 	Configuration.MQAddressFormat = "amqp://%v:%v@%v:%v/"
 	Configuration.DefaultStatus = "OK"
-	Configuration.MQExchange = "amq.rates"
+	Configuration.MQExchange = "TestExchange"
 	Configuration.StaleAfterMS = 100 // 100ms
+	Configuration.InterestType = "INTEREST"
+	Configuration.RateText = "RATE"
+	Configuration.FXText = "FX"
+	Configuration.RoutingKeyFormat = "%v.%v.%v.%v"
 }

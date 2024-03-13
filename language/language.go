@@ -13,7 +13,7 @@ const (
 	TxtFlagRecv           string = "recv"
 	TxtConnectedToMQ      string = "Successfully Connected to RabbitMQ"
 	TxtMQChannelOpen      string = "MQ channel opened"
-	TxtMQConnectToQueue   string = "Connecting to %v queue\n"
+	TxtMQConnectToQueue   string = "Connecting to %v queue"
 	TxtMQQueueConnected   string = "Connected"
 	TxtMQConsumers        string = "Consumers :"
 	TxtMQMessages         string = "Messages  :"
@@ -21,4 +21,6 @@ const (
 	TxtMQMessagePublised  string = "Successfully Published Message to Queue : %v\n"
 	TxtWaitingForMessages string = "Waiting for messages..."
 	TxtRateMessageDebug   string = "Rates: %10v %15f %15f  \n"
+	TxtRoutingKey         string = "routingKey: %v"
+	TxtEquals             string = "="
 )
