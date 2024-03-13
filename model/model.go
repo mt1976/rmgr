@@ -8,13 +8,13 @@ import (
 type Rate struct {
 	Bid        float64 `json:"bid,omitempty"`
 	Ask        float64 `json:"ask,omitempty"`
-	Owner      string  `json:"own,omitempty"`
-	RiskCentre string  `json:"rsk,omitempty"`
+	Owner      string  `json:"owner,omitempty"`
+	RiskCentre string  `json:"riskcentre,omitempty"`
 	DateTime   string  `json:"dTme,omitempty"`
 	Amount     string  `json:"amt,omitempty"`
 	AmtCcy     string  `json:"amtCcy,omitempty"`
-	Status     string  `json:"sts,omitempty"`
-	Category   string  `json:"cat,omitempty"`
+	Status     string  `json:"status,omitempty"`
+	Category   string  `json:"category,omitempty"`
 	ID         string  `json:"id,omitempty"`
 	Source     string  `json:"src,omitempty"`
 }

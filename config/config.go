@@ -14,6 +14,7 @@ type Config struct {
 	MQHost              string
 	MQPort              int
 	MQContentType       string
+	MQExchange          string
 	DateTimeFormat      string
 	MQAddressFormat     string
 	DefaultStatus       string
@@ -43,5 +44,6 @@ func init() {
 	Configuration.DateTimeFormat = "2006-01-02T15:04:05"
 	Configuration.MQAddressFormat = "amqp://%v:%v@%v:%v/"
 	Configuration.DefaultStatus = "OK"
+	Configuration.MQExchange = "amqp.rates"
 
 }

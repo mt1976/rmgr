@@ -107,19 +107,24 @@ func Run() error {
 
 func publishRateMessage(ch *amqp.Channel, rec []string) {
 
-	asset := rec[M.TYPE] // Asset Class
-	if asset != "FX" {
-		return
+	//asset := rec[M.TYPE] // Asset Class
+	//if asset != "FX" {
+	//	return
+	//}
+	rateType := rec[M.ASSET_CLASS] // Rate Type
+	rateForm := "INTEREST"
+	if rateType[0:2] == "FX" {
+		rateForm = "RATE"
 	}
-	rateType := rec[M.ASSET_CLASS]           // Rate Type
 	source, _ := strconv.Atoi(rec[M.SOURCE]) // Source
 	sourceName := Types[source]
 	rateID := rec[M.BASE_CCY] + rec[M.QUOTE_CCY]
-	if rateType == "FXFWD" {
-		rateID = rateID + rec[M.TENOR]
-	}
+	rateID = rateID + rec[M.TENOR]
 	rateID = rateID + "=" // Comment]
 
+	routingKeyFormat := "%v.%v.%v.%v"
+	routingKey := fmt.Sprintf(routingKeyFormat, rec[M.TYPE], rec[M.BASE_CCY], rec[M.QUOTE_CCY], rec[M.TENOR])
+	fmt.Printf("routingKey: %v\n", routingKey)
 	// byte to string conversion
 	//instStr := fmt.Sprintf("%c", asset)
 	// fmt.Printf("instStr: %v\n", asset)
@@ -129,7 +134,7 @@ func publishRateMessage(ch *amqp.Channel, rec []string) {
 	// fmt.Printf("rateID: %v\n", rateID)
 
 	var x M.Rate
-	x.SetCat(sourceName)
+	x.SetCat(rateForm)
 	x.SetSrc(sourceName)
 	x.SetID(rateID)
 	x.SetBid(rec[M.BID])
