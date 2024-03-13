@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"strings"
 
 	C "github.com/mt1976/rmg/config"
@@ -16,8 +16,8 @@ var config = C.Configuration
 
 func main() {
 
-	fmt.Println(config.ApplicationName)
-	fmt.Println(strings.Repeat("=", len(config.ApplicationName)))
+	log.Println(config.ApplicationName)
+	log.Println(strings.Repeat("=", len(config.ApplicationName)))
 
 	var sender bool
 	var receiver bool
@@ -28,50 +28,50 @@ func main() {
 	flag.Parse()
 
 	if sender && receiver {
-		fmt.Printf(E.ErrCannotBeSenderAndReceiver)
+		log.Printf(E.ErrCannotBeSenderAndReceiver)
 		return
 	}
 	if !sender && !receiver {
-		fmt.Printf(E.ErrCannotBeSenderAndReceiver)
+		log.Printf(E.ErrCannotBeSenderAndReceiver)
 		return
 	}
 
 	if sender {
-		fmt.Println(L.TxtMode, L.TxtModeSending)
+		log.Println(L.TxtMode, L.TxtModeSending)
 	} else {
-		fmt.Println(L.TxtMode, L.TxtModeReceiving)
+		log.Println(L.TxtMode, L.TxtModeReceiving)
 	}
 	// Get the configuration
 
 	port := config.Port
 	target := config.Target
-	fmt.Println(L.TxtTarget, target)
-	fmt.Println(L.TxtPort, port)
+	log.Println(L.TxtTarget, target)
+	log.Println(L.TxtPort, port)
 
-	//targetAddress := fmt.Sprintf("%s:%d", target, port)
-	//fmt.Println(L.TxtAddress, targetAddress)
+	//targetAddress := log.Sprintf("%s:%d", target, port)
+	//log.Println(L.TxtAddress, targetAddress)
 
 	switch {
 	case sender:
-		//fmt.Println(L.TxtMode, L.TxtModeSending)
+		//log.Println(L.TxtMode, L.TxtModeSending)
 		send()
 	case receiver:
-		//fmt.Println(L.TxtMode, L.TxtModeReceiving)
+		//log.Println(L.TxtMode, L.TxtModeReceiving)
 		receive()
 	default:
-		fmt.Println(E.ErrInvalidRole)
+		log.Println(E.ErrInvalidRole)
 	}
 
 }
 
 func send() {
-	//fmt.Println(address)
-	//fmt.Println(C.Configuration)
+	//log.Println(address)
+	//log.Println(C.Configuration)
 	S.Run()
 }
 
 func receive() {
-	//fmt.Println(address)
-	//fmt.Println(C.Configuration)
+	//log.Println(address)
+	//log.Println(C.Configuration)
 	R.Run()
 }

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -46,12 +46,12 @@ func (rt *Rate) GetDTmeString() string {
 }
 
 func (rt *Rate) GetDTmeTime() time.Time {
-	fmt.Printf("C.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
-	fmt.Printf("rt.DateTime: %v\n", rt.DateTime)
+	log.Printf("C.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	log.Printf("rt.DateTime: %v\n", rt.DateTime)
 	t, err := time.Parse(config.Configuration.DateTimeFormat, rt.DateTime)
-	fmt.Printf("t: %v\n", t)
+	log.Printf("t: %v\n", t)
 	if err != nil {
-		fmt.Println("DateConversionError", err.Error())
+		log.Println("DateConversionError", err.Error())
 	}
 	return t
 }
@@ -88,7 +88,7 @@ func (rt *Rate) SetBid(Bid string) *Rate {
 	//strconv.ParseFloat(Bid, 64)
 	arse, Err := strconv.ParseFloat(Bid, 64)
 	if Err != nil {
-		fmt.Println(Err)
+		log.Println(Err)
 	}
 	rt.Bid = arse
 	return rt
@@ -102,7 +102,7 @@ func (rt *Rate) SetBidFloat(Bid float64) *Rate {
 func (rt *Rate) SetAsk(Ask string) *Rate {
 	arse, Err := strconv.ParseFloat(Ask, 64)
 	if Err != nil {
-		fmt.Println(Err)
+		log.Println(Err)
 	}
 	rt.Ask = arse
 	return rt
@@ -172,7 +172,7 @@ func (rt *Rate) GetStaleAfter() time.Time {
 	// parse to time
 	xx, err := time.Parse(config.Configuration.DateTimeFormat, rt.StaleAfter)
 	if err != nil {
-		fmt.Println("Error parsing stale after time: ", err)
+		log.Println("Error parsing stale after time: ", err)
 	}
 	return xx
 }
@@ -182,11 +182,11 @@ func (rt *Rate) GetStaleAfterString() string {
 }
 
 func (rt *Rate) SetStaleAfter(afterMS int) {
-	fmt.Printf("rt.GetDTmeTime(): %v\n", rt.GetDTmeTime())
-	fmt.Printf("afterMS: %v\n", afterMS)
-	fmt.Printf("time.Millisecond: %v\n", time.Millisecond)
-	fmt.Printf("config.Configuration.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
-	fmt.Printf("time.Duration(afterMS): %v\n", time.Duration(afterMS))
-	fmt.Printf("(time.Duration(afterMS) * time.Millisecond): %v\n", (time.Duration(afterMS) * time.Millisecond))
+	log.Printf("rt.GetDTmeTime(): %v\n", rt.GetDTmeTime())
+	log.Printf("afterMS: %v\n", afterMS)
+	log.Printf("time.Millisecond: %v\n", time.Millisecond)
+	log.Printf("config.Configuration.DateTimeFormat: %v\n", config.Configuration.DateTimeFormat)
+	log.Printf("time.Duration(afterMS): %v\n", time.Duration(afterMS))
+	log.Printf("(time.Duration(afterMS) * time.Millisecond): %v\n", (time.Duration(afterMS) * time.Millisecond))
 	rt.StaleAfter = rt.GetDTmeTime().Add(time.Duration(afterMS) * time.Millisecond).Format(config.Configuration.DateTimeFormat)
 }

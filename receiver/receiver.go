@@ -3,6 +3,7 @@ package receiver
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	C "github.com/mt1976/rmg/config"
 	E "github.com/mt1976/rmg/errors"
@@ -21,28 +22,28 @@ func Run() error {
 	//target := "amqp://%v:%v@%v:%v/"
 	targetAddress := fmt.Sprintf(config.MQAddressFormat, user, password, host, port)
 
-	//fmt.Println("Go RabbitMQ Tutorial")
+	//log.Println("Go RabbitMQ Tutorial")
 	conn, err := amqp.Dial(targetAddress)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		panic(err.Error())
 	}
 	defer conn.Close()
 
-	fmt.Println(L.TxtConnectedToMQ)
+	log.Println(L.TxtConnectedToMQ)
 
 	// Let's start by opening a channel to our RabbitMQ instance
 	// over the connection we have already established
 	ch, err := conn.Channel()
 	if err != nil {
-		fmt.Println(E.ErrError, err)
+		log.Println(E.ErrError, err)
 		panic(err.Error())
 	}
 	defer ch.Close()
-	fmt.Println(L.TxtMQChannelOpen)
-	fmt.Printf(L.TxtMQConnectToQueue, config.MQQueue)
+	log.Println(L.TxtMQChannelOpen)
+	log.Printf(L.TxtMQConnectToQueue, config.MQQueue)
 
-	//fmt.Printf("config: %v\n", config)
+	//log.Printf("config: %v\n", config)
 
 	// declaring consumer with its properties over channel opened
 	msgs, err := ch.Consume(
@@ -55,7 +56,7 @@ func Run() error {
 		nil,            //args
 	)
 	if err != nil {
-		fmt.Println(E.ErrError, err)
+		log.Println(E.ErrError, err)
 		panic(err)
 	}
 
@@ -63,20 +64,20 @@ func Run() error {
 	forever := make(chan bool)
 	go func() {
 		for msg := range msgs {
-			//fmt.Printf("Received Message: %s\n", msg.Body)
+			//log.Printf("Received Message: %s\n", msg.Body)
 			if msg.ContentType != config.MQContentType {
-				fmt.Printf(E.ErrInvalidContentType, msg.ContentType)
+				log.Printf(E.ErrInvalidContentType, msg.ContentType)
 				return
 			}
 			rate, err := Unmarshal(msg.Body)
 			if err != nil {
-				fmt.Printf(E.ErrUnmarshalJSON, err)
+				log.Printf(E.ErrUnmarshalJSON, err)
 				return
 			}
-			fmt.Printf(L.TxtRateMessageDebug, rate.GetID(), rate.GetBid(), rate.GetAsk())
+			log.Printf(L.TxtRateMessageDebug, rate.GetID(), rate.GetBid(), rate.GetAsk())
 		}
 	}()
-	fmt.Println(L.TxtWaitingForMessages)
+	log.Println(L.TxtWaitingForMessages)
 	<-forever
 	return nil
 }
