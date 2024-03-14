@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Demo</title>
+</head>
+<body>
+    <h1>WebSocket Demo</h1>
+    <div>Price: <span id="price">Waiting for data...</span></div>
+    <script>
+        var socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onmessage = function(event) {
+            var message = event.data;
+            document.getElementById("price").textContent = message;
+        };
+
+        socket.onopen = function(event) {
+            console.log("Connection established!");
+        };
+
+        socket.onerror = function(error) {
+            console.log("WebSocket Error: " + error);
+        };
+    </script>
+</body>
+</html>
