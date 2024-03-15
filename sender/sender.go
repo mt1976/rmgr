@@ -95,14 +95,18 @@ func Run() error {
 	// for o.Scan() {
 	// 	println(o.Text("Month"), o.Text("Day"))
 	// }
-	for recNo, rec := range records {
-		//log.Printf("rec %v: %v %v\n", recNo, rec, len(rec))
-		if recNo != 0 {
-			publishRateMessage(ch, rec)
+
+	for {
+		// Repeatedly parse the returned records and publish the rates.
+		for recNo, rec := range records {
+			//log.Printf("rec %v: %v %v\n", recNo, rec, len(rec))
+			if recNo != 0 {
+				publishRateMessage(ch, rec)
+			}
+			// if recNo >= 20 {
+			// 	continue
+			// }
 		}
-		// if recNo >= 20 {
-		// 	continue
-		// }
 	}
 	return nil
 }
