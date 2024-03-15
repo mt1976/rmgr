@@ -10,6 +10,7 @@ import (
 	L "github.com/mt1976/rmg/language"
 	R "github.com/mt1976/rmg/receiver"
 	S "github.com/mt1976/rmg/sender"
+	W "github.com/mt1976/rmg/web"
 )
 
 var config = C.Configuration
@@ -21,11 +22,18 @@ func main() {
 
 	var sender bool
 	var receiver bool
+	var web bool
 
 	flag.BoolVar(&sender, L.TxtFlagSend, false, L.TxtUsageSendMode)
 	flag.BoolVar(&receiver, L.TxtFlagRecv, false, L.TxtUsageRecvMode)
+	flag.BoolVar(&web, "web", false, "running web mode")
 
 	flag.Parse()
+
+	if web {
+		W.Run()
+		return
+	}
 
 	if (sender && receiver) || (!sender && !receiver) {
 		log.Panicln(E.ErrCannotBeSenderAndReceiver)
