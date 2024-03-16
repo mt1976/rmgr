@@ -5,7 +5,12 @@
 </head>
 <body>
     <h1>WebSocket Demo</h1>
-    <div>Price: <span id="price">Waiting for data...</span></div>
+    <div id="esp">
+        <div>Price: <span id="price">Waiting for data...</span></div>
+        Enter Topic xx.xx.xx.xx&nbsp;&nbsp;&nbsp;&nbsp;<input type="textbox" id="requestedTopic" value="" >
+        <input type="submit" value="Submit" onclick="startConversation()">
+    </div>
+
     <script>
         var socket = new WebSocket("ws://localhost:8080/ws");
 
@@ -22,6 +27,16 @@
         socket.onerror = function(error) {
             console.log("WebSocket Error: " + error);
         };
+
+        startConversation = function() {
+            var message = "GET|"+document.getElementById("requestedTopic").value;
+       
+            xx = document.getElementById("price").textContent = "Requesting ["+message+"]";
+            console.log("Message: " + message);
+            alert("Message: " + message);
+            //socket.send(message);
+
+        }
     </script>
 </body>
 </html>
