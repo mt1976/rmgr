@@ -29,7 +29,7 @@
         };
 
         startConversation = function() {
-            var message = "GET|"+document.getElementById("requestedTopic").value;
+            var message = "GET:"+document.getElementById("requestedTopic").value;
        
             xx = document.getElementById("price").textContent = "Requesting ["+message+"]";
             console.log("Message: " + message);
