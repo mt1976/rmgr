@@ -7,6 +7,8 @@ require (
 	github.com/streadway/amqp v1.1.0
 )
 
+require github.com/yassinebenaid/godump v0.2.2 // indirect
+
 require (
 	github.com/gorilla/websocket v1.5.1
 	golang.org/x/net v0.17.0 // indirect
